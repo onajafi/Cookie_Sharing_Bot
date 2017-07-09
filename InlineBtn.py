@@ -26,6 +26,11 @@ def callbacks(call):
     print call
     print "and by the user: " + call.from_user.username + ' ' + call.from_user.first_name + ' ' + call.from_user.last_name
 
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("OMGGG!!!", callback_data="CALLB_DA"))
+    markup.add(types.InlineKeyboardButton("Yahoo", url="http://www.yahoo.com"))
+    bot.edit_message_text("EDITED!!!",chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
