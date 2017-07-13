@@ -1,23 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import telebot
 import inits
 from telebot import types
 import sqlite3
+import emoji
 
 bot = telebot.TeleBot(inits.bot_address)
 
-# @bot.inline_handler(func=lambda query: True)
-# def inline(query):
-#     keyboard = telebot.types.InlineKeyboardMarkup()
-#     btn = telebot.types.InlineKeyboardButton(text="Button text", callback_data="inline")
-#     keyboard.add(btn)
-#     r = telebot.types.InlineQueryResultArticle(
-#         id="1",
-#         title="Title",
-#         input_message_content=telebot.types.InputTextMessageContent(message_text="Test"),
-#         reply_markup=keyboard
-#     )
-#     bot.answer_inline_query(query.id, [r], cache_time=10)
-#
 def generate_duel_code(id,time):
     return '#' + id[0:3] + time[0:3] + id[3:] + time[3:]
 
@@ -171,8 +161,15 @@ def send_welcome(message):
     init_inline_func(InvDuelCode)
     store_duel(message.from_user.id,message.date,InvDuelCode)
 
-
-
+@bot.message_handler(content_types=['text'])
+def get_MSG(message):
+    print message.text
+    if (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌'))):
+        print "Got M1"
+    elif (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫'))):
+        print "Got M2"
+    elif (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦'))):
+        print "Got M3"
 
 #print generate_duel_code("12343345","773457")
 # store_duel(10,10,"hello")

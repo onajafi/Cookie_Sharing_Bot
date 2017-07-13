@@ -178,7 +178,6 @@ def seeRank(bot,update):
     bot.sendMessage(chat_id=update.message.chat_id,
                     text="Sorry your rank is above 100 :(")
 
-
 def unknown(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text="Me not get that?!?!")
 
