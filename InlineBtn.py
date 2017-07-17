@@ -18,10 +18,13 @@ def init_inline_func(InvDuelCode):
     def query_text(inline_query):
         try:
             markup = types.InlineKeyboardMarkup()
-            markup.add(types.InlineKeyboardButton("Challenge accepted", callback_data=InvDuelCode))
+            markup.add(types.InlineKeyboardButton("Accept", callback_data=InvDuelCode))
+            tempAmnt=give_duel_amnt(InvDuelCode)
+            if(give_duel_amnt(InvDuelCode) == -1):
+                raise Exception("Looks like the duel is not in the file")
             r = types.InlineQueryResultArticle('1', 'Invite to CookieDuel',
-                                               types.InputTextMessageContent("Hi,\nI Like to invite you to a CookieDuel"),
-                                               reply_markup=markup)
+                                               types.InputTextMessageContent("Hi,\nI Like to invite you to a CookieDuel\non "  + str(tempAmnt) + emoji.emojize(emoji.demojize(u'❤'))),
+                                                                             reply_markup=markup)
             bot.answer_inline_query(inline_query.id, [r])
             print "Made a duel request with ID: " + InvDuelCode
         except Exception as e:
@@ -144,6 +147,7 @@ def give_user_like(userId):
     cn.close()
     return row[6]
 
+
 Duel_list=[]
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -199,11 +203,12 @@ def send_welcome(message):
         return
 
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("invite",switch_inline_query=InvDuelCode ))
+    markup.add(types.InlineKeyboardButton("invite someone",switch_inline_query=InvDuelCode ))
     bot.send_message(message.chat.id, "Hi,\nI Like to invite you to a CookieDuel\non " + str(Amnt) + emoji.emojize(emoji.demojize(u'❤')), reply_markup=markup)
 
     init_inline_func(InvDuelCode)
     store_duel(message.from_user.id,Amnt,InvDuelCode)
+
 
 def get_Duel_MSG(message):
     print message.text
@@ -213,7 +218,7 @@ def get_Duel_MSG(message):
         print "Got M2"
     elif (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦'))):
         print "Got M3"
-    return False;
+    return False
 
 #print generate_duel_code("12343345","773457")
 # store_duel(10,10,"hello")

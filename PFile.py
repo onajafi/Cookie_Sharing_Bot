@@ -2,14 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
-# from telegram.ext import Updater
-# from telegram.ext import CommandHandler
-# from telegram.ext import MessageHandler, Filters
 from datetime import datetime
-from datetime import timedelta
 from telebot import types
 import telebot
-import logging
 import emoji
 import inits
 
@@ -28,12 +23,6 @@ type /howtoplay to get started!"""
 def send_welcome(message):
     inits.bot.sendMessage(chat_id=message.message.chat_id, text=Starttext)
 
-# def start(bot, update):
-#     bot.sendMessage(chat_id=update.message.chat_id, text=Starttext)
-
-#bot1 = telebot.TeleBot(inits.bot_address)
-#tb = telebot.TeleBot('384344173:AAFvWbjW5jHO2yh_wvO3v5ysvXqFqefsSFg')
-
 @inits.bot.message_handler(commands=['howtoplay'])
 def HowToPlay(message):
     markup = types.ReplyKeyboardMarkup(row_width=1)
@@ -41,18 +30,7 @@ def HowToPlay(message):
     markup.row(itembtna)
     inits.bot.send_message(message.chat.id, HTPtext, reply_markup=markup)
 
-# def HowToPlay(bot,update):
-#     TestCom(bot,update)
-#     #bot.sendMessage(chat_id=update.message.chat_id, text=HTPtext)
-#
-# def TestCom(bot,update):
-#     markup = types.ReplyKeyboardMarkup(row_width=1)
-#     itembtna = types.KeyboardButton('🍪')
-#     markup.row(itembtna)
-#     inits.bot.send_message(update.message.chat_id,HTPtext, reply_markup=markup)
-
 last_time={}
-
 @inits.bot.message_handler(commands=['top10'])
 def seeRankTop10(message):
 
@@ -192,47 +170,7 @@ def getCm(message):
     print "done"
 
 
-
-# def unknown(bot, update):
-#     bot.sendMessage(chat_id=update.message.chat_id, text="Me not get that?!?!")
-
-
-# updater = Updater(token=inits.bot_address)
-#updater = Updater(token='432998260:AAHw2zyD4zx79WHpcbAVjAc8cYLz_PIfRuM')
-#updater = Updater(token='384344173:AAFvWbjW5jHO2yh_wvO3v5ysvXqFqefsSFg')
-
-# dispatcher = updater.dispatcher
-
-# logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-# howtoplay_handler = CommandHandler('howtoplay', HowToPlay)
-# dispatcher.add_handler(howtoplay_handler)
-
-# seeRankTop10_handler = CommandHandler('top10', seeRankTop10)
-# dispatcher.add_handler(seeRankTop10_handler)
-#
-# seeMeRank_handler = CommandHandler('rank', seeRank)
-# dispatcher.add_handler(seeMeRank_handler)
-
-# TestCom_handler = CommandHandler('test', TestCom)
-# dispatcher.add_handler(TestCom_handler)
-#
-#
-# start_handler = CommandHandler('start', start)
-# dispatcher.add_handler(start_handler)
-
-# cm_handler = MessageHandler([Filters.text], getCm)
-# dispatcher.add_handler(cm_handler)
-
-# unknown_handler = MessageHandler([Filters.command], unknown)
-# dispatcher.add_handler(unknown_handler)
-
-
-# updater.start_polling()
 print 'step1'
-#test_announce()
-# updater.idle()
+
 inits.bot.polling()
 print 'step2'
-# updater.stop()
-print 'step3'
