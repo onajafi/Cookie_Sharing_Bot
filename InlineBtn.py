@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import telebot
+
 
 from inits import bot
 from telebot import types
@@ -177,17 +177,6 @@ def callbacks(call):
             bot.send_message(user_Id, "Sorry, your not able to duel, I think you don't have enough likes :)")
             print "Sorry, your not able to duel, I think you don't have enough likes :)"
 
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    #reply = "Yello!!!"
-    #bot.reply_to(message, reply)
-    markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("Google", switch_inline_query="LetsRock"))
-    markup.add(types.InlineKeyboardButton("Yahoo", callback_data="12341234"))
-    bot.send_message(message.chat.id, "SAMPLE TEXT", disable_notification=True, reply_markup=markup)
-
-    print message.text
-
 @bot.message_handler(commands=['invite'])
 def send_welcome(message):
     InvDuelCode=generate_duel_code(str(message.from_user.id),str(message.date))
@@ -216,8 +205,7 @@ def send_welcome(message):
     init_inline_func(InvDuelCode)
     store_duel(message.from_user.id,Amnt,InvDuelCode)
 
-@bot.message_handler(content_types=['text'])
-def get_MSG(message):
+def get_Duel_MSG(message):
     print message.text
     if (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌'))):
         print "Got M1"
@@ -225,12 +213,13 @@ def get_MSG(message):
         print "Got M2"
     elif (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦'))):
         print "Got M3"
+    return False;
 
 #print generate_duel_code("12343345","773457")
 # store_duel(10,10,"hello")
 # print update_duel("hello",134)
 
-bot.polling()
+# bot.polling()
 # while(1):
 #     try:
 #         bot.polling()
