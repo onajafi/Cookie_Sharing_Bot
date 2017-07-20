@@ -7,6 +7,8 @@ from telebot import types
 import sqlite3
 import emoji
 from Duel import Duel
+from Duel import Duelmarkup
+from Duel import Defaultmarkup
 
 
 
@@ -165,8 +167,17 @@ def is_in_duel(UsrId):
 def get_duel_move(UsrId,moveNum):
     for Duel_ele in Duel_list:
         if(Duel_ele.F_Id == UsrId or Duel_ele.S_Id == UsrId):
-            bot.send_message(Duel_ele.F_Id, find_disp_name(UsrId) + " has made its move")
-            bot.send_message(Duel_ele.S_Id, find_disp_name(UsrId) + " has made its move")
+            if(Duel_ele.F_Id == UsrId):
+                if(Duel_ele.F_temp_Move == 0):
+                    bot.send_message(Duel_ele.S_Id, find_disp_name(UsrId) + " has made its move")
+                else:
+                    bot.send_message(Duel_ele.S_Id, find_disp_name(UsrId) + " has changed its move")
+            else:
+                if (Duel_ele.S_temp_Move == 0):
+                    bot.send_message(Duel_ele.F_Id, find_disp_name(UsrId) + " has made its move")
+                else:
+                    bot.send_message(Duel_ele.F_Id, find_disp_name(UsrId) + " has changed its move")
+
 
             Duel_ele.solo_move(UsrId,moveNum)
             if(Duel_ele.Ready_to_move()):
@@ -178,9 +189,9 @@ def get_duel_move(UsrId,moveNum):
                     winMSG= "Results:"\
                             + "\n- " + Duel_ele.winner()[1] + " will get " + str(Duel_ele.Amnt) + emoji.emojize(emoji.demojize(u'❤')) \
                             + "\n- " + Duel_ele.looser()[1] + " will get " + str(Duel_ele.Amnt) + emoji.emojize(emoji.demojize(u'💔'))
-                    bot.send_message(Duel_ele.F_Id, winMSG)
-                    bot.send_message(Duel_ele.S_Id, winMSG)
-
+                    bot.send_message(Duel_ele.F_Id, winMSG, reply_markup=Defaultmarkup)
+                    bot.send_message(Duel_ele.S_Id, winMSG, reply_markup=Defaultmarkup)
+            return
 
 
 @bot.message_handler(commands=['abortduel'])
@@ -215,8 +226,8 @@ def callbacks(call):
                 if(temp == -1):
                     bot.send_message(user_Id, "Sorry can't start this Duel please try another or make a new one")
                 Duel_list.append(Duel(First_Id,user_Id,temp,name_First_Id,name_user_Id))
-                bot.send_message(user_Id,"You are now in a CookieDuel with " + name_First_Id)
-                bot.send_message(First_Id, "You are now in a CookieDuel with " + name_user_Id)
+                bot.send_message(user_Id,"You are now in a CookieDuel with " + name_First_Id, reply_markup=Duelmarkup)
+                bot.send_message(First_Id, "You are now in a CookieDuel with " + name_user_Id, reply_markup=Duelmarkup)
 
         elif result==2:
             bot.send_message(user_Id,"Sorry, you can't duel with your self :))")
@@ -260,7 +271,6 @@ def send_welcome(message):
 
     init_inline_func(InvDuelCode)
     store_duel(message.from_user.id,Amnt,InvDuelCode)
-
 
 def get_Duel_MSG(message):
     print message.text

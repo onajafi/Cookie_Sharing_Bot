@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import emoji
+from telebot import types
 
 class Duel:
     """A Class to control the process of Duels"""
@@ -119,3 +120,16 @@ class Duel:
 
     def Ready_to_move(self):
         return self.ready_to_move
+
+Duelmarkup = types.ReplyKeyboardMarkup(row_width=1)
+itembtna = types.KeyboardButton(emoji.emojize(emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌')))
+itembtnb = types.KeyboardButton(emoji.emojize(emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫')))
+itembtnc = types.KeyboardButton(emoji.emojize(emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦')))
+
+Duelmarkup.row(itembtna)
+Duelmarkup.row(itembtnb)
+Duelmarkup.row(itembtnc)
+
+Defaultmarkup = types.ReplyKeyboardMarkup(row_width=1)
+itembtna = types.KeyboardButton(emoji.emojize(emoji.demojize(u'🍪')))
+Defaultmarkup.row(itembtna)
