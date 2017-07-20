@@ -67,6 +67,9 @@ def update_duel(CallBId,SecondId):
         if row[0]==SecondId:
             con.close()
             return 2
+        elif is_in_duel(row[0]):# first person is in Duel
+            con.close()
+            return 4
         else:
             if(give_duel_amnt(CallBId) <= give_user_like(SecondId)):
                 cur.execute("UPDATE Duel SET Second_Id=? WHERE call_back_code=?", (SecondId, CallBId))
@@ -150,6 +153,47 @@ def give_user_like(userId):
 
 Duel_list=[]
 
+def finish_duel():
+    pass
+
+def is_in_duel(UsrId):
+    for Duel_ele in Duel_list:
+        if(Duel_ele.F_Id == UsrId or Duel_ele.S_Id == UsrId):
+            return True
+    return False
+
+def get_duel_move(UsrId,moveNum):
+    for Duel_ele in Duel_list:
+        if(Duel_ele.F_Id == UsrId or Duel_ele.S_Id == UsrId):
+            bot.send_message(Duel_ele.F_Id, find_disp_name(UsrId) + " has made its move")
+            bot.send_message(Duel_ele.S_Id, find_disp_name(UsrId) + " has made its move")
+
+            Duel_ele.solo_move(UsrId,moveNum)
+            if(Duel_ele.Ready_to_move()):
+                resMSG=Duel_ele.compute_solo_moves()
+                bot.send_message(Duel_ele.F_Id, resMSG)
+                bot.send_message(Duel_ele.S_Id, resMSG)
+
+                if(Duel_ele.winner() != None):
+                    winMSG= "Results:"\
+                            + "\n- " + Duel_ele.winner()[1] + " will get " + str(Duel_ele.Amnt) + emoji.emojize(emoji.demojize(u'❤')) \
+                            + "\n- " + Duel_ele.looser()[1] + " will get " + str(Duel_ele.Amnt) + emoji.emojize(emoji.demojize(u'💔'))
+                    bot.send_message(Duel_ele.F_Id, winMSG)
+                    bot.send_message(Duel_ele.S_Id, winMSG)
+
+
+
+@bot.message_handler(commands=['abortduel'])
+def abort_duel(message):
+    UsrId=message.from_user.id
+
+    for Duel_ele in Duel_list:
+        if(Duel_ele.F_Id == UsrId or Duel_ele.S_Id == UsrId):
+            bot.send_message(Duel_ele.F_Id, "The Duel has been aborted by " + find_disp_name(UsrId))
+            bot.send_message(Duel_ele.S_Id, "The Duel has been aborted by " + find_disp_name(UsrId))
+            Duel_list.remove(Duel_ele)
+            return True
+
 @bot.callback_query_handler(func=lambda call: True)
 def callbacks(call):
 
@@ -170,16 +214,24 @@ def callbacks(call):
                 temp=give_duel_amnt(rec_data)
                 if(temp == -1):
                     bot.send_message(user_Id, "Sorry can't start this Duel please try another or make a new one")
-                Duel_list.append(Duel(First_Id,user_Id,temp))
+                Duel_list.append(Duel(First_Id,user_Id,temp,name_First_Id,name_user_Id))
                 bot.send_message(user_Id,"You are now in a CookieDuel with " + name_First_Id)
                 bot.send_message(First_Id, "You are now in a CookieDuel with " + name_user_Id)
 
         elif result==2:
             bot.send_message(user_Id,"Sorry, you can't duel with your self :))")
             print "Sorry, you can't duel with your self :))"
-        else:
-            bot.send_message(user_Id, "Sorry, your not able to duel, I think you don't have enough likes :)")
+        elif result==3:
+            bot.send_message(user_Id, "Sorry, your not able to duel, Looks like you don't have enough likes :)" +
+                             "\nyou currently have " + give_user_like(user_Id) + emoji.emojize(emoji.demojize(u'❤')))
             print "Sorry, your not able to duel, I think you don't have enough likes :)"
+        elif result==4:
+            bot.send_message(user_Id, "Sorry, The user that you want to Duel with, is already in a Duel" +
+                             "\nTry to tell him or her to finish the Duel or /abort it\nyou can also start a duel with /invite")
+            print "user came a little late"
+        else:
+            bot.send_message(user_Id, "Sorry can't start this Duel please try another or make a new one")
+            print "error in duel starting..."
 
 @bot.message_handler(commands=['invite'])
 def send_welcome(message):
@@ -212,12 +264,20 @@ def send_welcome(message):
 
 def get_Duel_MSG(message):
     print message.text
+    if(not is_in_duel(message.from_user.id)):
+        return False
     if (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌'))):
         print "Got M1"
+        get_duel_move(message.from_user.id,1)
+        return True
     elif (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫'))):
         print "Got M2"
+        get_duel_move(message.from_user.id,2)
+        return True
     elif (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦'))):
         print "Got M3"
+        get_duel_move(message.from_user.id,3)
+        return True
     return False
 
 #print generate_duel_code("12343345","773457")
