@@ -54,6 +54,8 @@ def store_duel(FirstId,Amnt,CallBId,SecondId=0):
     con.close()
 
 def update_duel(CallBId,SecondId):
+    if(is_in_duel(SecondId)):
+        return 5
     con = sqlite3.connect('duel.sqlite')
     cur = con.cursor()
     try:
@@ -152,11 +154,32 @@ def give_user_like(userId):
     cn.close()
     return row[6]
 
+def add_likes(userId,Like_Amnt):
+    cn = sqlite3.connect("zthb.sqlite")
+    cur = cn.cursor()
+    cur.execute("SELECT * FROM cookie_giver WHERE u_id={0}".format(userId))
+    cn.execute("PRAGMA ENCODING = 'utf8';")
+    # cur.row_factory = lite.Row
+    cn.text_factory = str
+    row = cur.fetchone()
+    if row != None:
+        userLikes = row[6] + Like_Amnt
+        cur.execute("UPDATE cookie_giver SET u_likes=? WHERE u_id=?", (userLikes, userId))
+        cn.commit()
+        bot.send_message(userId, "Now me {0}❤ you".format(userLikes))
+    cn.close()
 
 Duel_list=[]
 
-def finish_duel():
-    pass
+def finish_duel(Duel_ele):
+    WinID = Duel_ele.winner()[0]
+    LoseID = Duel_ele.looser()[0]
+
+    add_likes(WinID,Duel_ele.Amnt)
+    add_likes(LoseID,-Duel_ele.Amnt)
+
+    Duel_list.remove(Duel_ele)
+
 
 def is_in_duel(UsrId):
     for Duel_ele in Duel_list:
@@ -172,16 +195,24 @@ def get_duel_move(UsrId,moveNum):
                     bot.send_message(Duel_ele.S_Id, find_disp_name(UsrId) + " has made its move")
                 else:
                     bot.send_message(Duel_ele.S_Id, find_disp_name(UsrId) + " has changed its move")
+                    bot.send_message(Duel_ele.F_Id, "You have changed your move")
             else:
                 if (Duel_ele.S_temp_Move == 0):
                     bot.send_message(Duel_ele.F_Id, find_disp_name(UsrId) + " has made its move")
                 else:
                     bot.send_message(Duel_ele.F_Id, find_disp_name(UsrId) + " has changed its move")
+                    bot.send_message(Duel_ele.S_Id, "You have changed your move")
 
 
+            print "PART1"
             Duel_ele.solo_move(UsrId,moveNum)
             if(Duel_ele.Ready_to_move()):
                 resMSG=Duel_ele.compute_solo_moves()
+
+                CM_MSG=Duel_ele.CookieM_MSG
+                bot.send_message(Duel_ele.F_Id, CM_MSG)
+                bot.send_message(Duel_ele.S_Id, CM_MSG)
+
                 bot.send_message(Duel_ele.F_Id, resMSG)
                 bot.send_message(Duel_ele.S_Id, resMSG)
 
@@ -191,6 +222,7 @@ def get_duel_move(UsrId,moveNum):
                             + "\n- " + Duel_ele.looser()[1] + " will get " + str(Duel_ele.Amnt) + emoji.emojize(emoji.demojize(u'💔'))
                     bot.send_message(Duel_ele.F_Id, winMSG, reply_markup=Defaultmarkup)
                     bot.send_message(Duel_ele.S_Id, winMSG, reply_markup=Defaultmarkup)
+                    finish_duel(Duel_ele)
             return
 
 
@@ -200,8 +232,8 @@ def abort_duel(message):
 
     for Duel_ele in Duel_list:
         if(Duel_ele.F_Id == UsrId or Duel_ele.S_Id == UsrId):
-            bot.send_message(Duel_ele.F_Id, "The Duel has been aborted by " + find_disp_name(UsrId))
-            bot.send_message(Duel_ele.S_Id, "The Duel has been aborted by " + find_disp_name(UsrId))
+            bot.send_message(Duel_ele.F_Id, "The Duel has been aborted by " + find_disp_name(UsrId), reply_markup=Defaultmarkup)
+            bot.send_message(Duel_ele.S_Id, "The Duel has been aborted by " + find_disp_name(UsrId), reply_markup=Defaultmarkup)
             Duel_list.remove(Duel_ele)
             return True
 
@@ -234,15 +266,26 @@ def callbacks(call):
             print "Sorry, you can't duel with your self :))"
         elif result==3:
             bot.send_message(user_Id, "Sorry, your not able to duel, Looks like you don't have enough likes :)" +
-                             "\nyou currently have " + give_user_like(user_Id) + emoji.emojize(emoji.demojize(u'❤')))
+                             "\nyou currently have " + str(give_user_like(user_Id)) + emoji.emojize(emoji.demojize(u'❤')))
             print "Sorry, your not able to duel, I think you don't have enough likes :)"
-        elif result==4:
+        elif result==4:# first user is in a duel
             bot.send_message(user_Id, "Sorry, The user that you want to Duel with, is already in a Duel" +
                              "\nTry to tell him or her to finish the Duel or /abort it\nyou can also start a duel with /invite")
             print "user came a little late"
+        elif result==5:# seconed user is in a duel
+            bot.send_message(user_Id, "Sorry, you're already in a duel")
+            print "already in duel"
         else:
             bot.send_message(user_Id, "Sorry can't start this Duel please try another or make a new one")
             print "error in duel starting..."
+
+@bot.message_handler(commands=['showcookies'])
+def show_markup(call):
+    if(is_in_duel(call.from_user.id)):
+        markup=Duelmarkup
+    else:
+        markup=Defaultmarkup
+    bot.send_message(call.from_user.id,"Here is the menu",reply_markup=markup)
 
 @bot.message_handler(commands=['invite'])
 def send_welcome(message):
@@ -256,8 +299,8 @@ def send_welcome(message):
         if(Amnt<=0):
             raise Exception
         if(give_user_like(message.from_user.id) < Amnt):
-            raise ValueError("User doesn't have the enough likes")
-    except ValueError as valerr:
+            raise IOError("User doesn't have the enough likes")
+    except IOError as valerr:
         print valerr
         bot.send_message(message.chat.id, "Sorry you don't have enough likes!")
         return

@@ -14,6 +14,8 @@ class Duel:
     S_temp_Move=0
     ready_to_move=False
 
+    CookieM_MSG=" "
+
     def __init__(self,FirstUsrId,SecondUsrId,Amnt,FirstName,SecondName):
         self.F_Id=FirstUsrId
         self.S_Id=SecondUsrId
@@ -41,21 +43,34 @@ class Duel:
         self.ready_to_move = False
 
         if(FirstMove==SecondMove):
+            self.CookieM_MSG = "Me not choose any cookies..."
             return 0
         elif(FirstMove==1):# 1 wins 2, 2 wins 3, 3 wins 1
             if(SecondMove==2):
+                self.CookieM_MSG = "Me choose " + emoji.emojize(
+                    emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌'))
                 return 1#First Player is the winner
             elif(SecondMove==3):
+                self.CookieM_MSG = "Me choose " + emoji.emojize(
+                    emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦'))
                 return 2#Second Player is the winner
         elif (FirstMove == 2):
             if (SecondMove == 1):
+                self.CookieM_MSG = "Me choose " + emoji.emojize(
+                    emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌'))
                 return 2
             elif (SecondMove == 3):
+                self.CookieM_MSG = "Me choose " + emoji.emojize(
+                    emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫'))
                 return 1
         elif (FirstMove == 3):
             if (SecondMove == 1):
+                self.CookieM_MSG = "Me choose " + emoji.emojize(
+                    emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦'))
                 return 1
             elif (SecondMove == 2):
+                self.CookieM_MSG = "Me choose " + emoji.emojize(
+                    emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫'))
                 return 2
 
     def PointUpdater(self,FirstMove,SecondMove):
@@ -101,7 +116,8 @@ class Duel:
             else:
                 return M_MSG + self.F_name + " " + str(self.FirstPoint) + "-" + str(self.SecondPoint) + " " + self.S_name \
                        + "\nand the winner is " + self.S_name
-
+        elif(result==0):
+            return M_MSG + self.F_name + " " + str(self.FirstPoint) + "-" + str(self.SecondPoint) + " " + self.S_name
         return result
 
     def winner(self):
@@ -120,6 +136,7 @@ class Duel:
 
     def Ready_to_move(self):
         return self.ready_to_move
+
 
 Duelmarkup = types.ReplyKeyboardMarkup(row_width=1)
 itembtna = types.KeyboardButton(emoji.emojize(emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌')))

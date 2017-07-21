@@ -170,6 +170,7 @@ def getCm(message):
     print "done"
 
 
+
 print 'step1'
 
 inits.bot.polling()
