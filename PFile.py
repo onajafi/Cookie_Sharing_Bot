@@ -7,6 +7,7 @@ from telebot import types
 import telebot
 import emoji
 import inits
+import time
 
 import InlineBtn
 
@@ -18,6 +19,38 @@ goodluck!"""
 Starttext="""Hellooooo...
 Me Cookie Monster and me here to eat cookies
 type /howtoplay to get started!"""
+HTDueltext="""A CookieDuel is a game played by two users.
+You can start a duel by either inviting someone to a duel or accepting someones invitation, \
+to invite someone to a duel enter the command /invite with the like amount that you want to duel on, for example:
+/invite 100
+Will make an invitation that you can send to someone or a group, after a user accepts the invitation the duel will start \
+and the winner will get the amount of likes that was specified in the command(in this case 100""" + \
+           emoji.emojize(emoji.demojize(u'❤')) + """) and the looser will get \
+dislikes as much as the likes the winner got (100""" + emoji.emojize(emoji.demojize(u'💔')) + \
+           """ for this example).\n""" + \
+           "In the duel you have three options of cookies to offer cookie monster " + \
+           "and he will choose one of the cookies that are given from the two users." + \
+           "\nCookie Monster,\n" + \
+    emoji.emojize("Prefers (" + emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌') + ") to (" +
+                  emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫') + ")\n") + \
+    emoji.emojize(",Prefers (" + emoji.demojize(u'🍪') + 'Chocolate Chip Cookie' + emoji.demojize(u'🍫') + ") to (" +
+                  emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦') + ")\n") + \
+    emoji.emojize("and Prefers (" + emoji.demojize(u'🍪') + 'Vanilla Ice-Cream Cookie' + emoji.demojize(u'🍦') + ") to (" +
+                  emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌') + ")\n") + \
+    "\nThe user, whose cookie has been chosen will get one point and the first user " + \
+    "that gets three points will be the winner.\n" + \
+    "good luck!"
+
+HELPtext="""here is the list of commands:
+/help - show list of commands
+/top10 - see the top 10 rank by likes
+/rank - see your rank
+/showcookies - Show the cookie buttons below
+
+/howtoduel - How to play a duel
+/invite <like_amount> - Make an invitation to a CookieDuel
+/abortduel - Cancel the duel that you're in"""
+
 
 @inits.bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -73,6 +106,14 @@ def seeRankTop10(message):
     cn.close()
     inits.bot.send_message(message.chat.id,
                            output)
+
+@inits.bot.message_handler(commands=['howtoduel'])
+def helpDuel(message):
+    inits.bot.send_message(message.from_user.id,HTDueltext)
+
+@inits.bot.message_handler(commands=['help'])
+def helpDuel(message):
+    inits.bot.send_message(message.from_user.id,HELPtext)
 
 @inits.bot.message_handler(commands=['rank'])
 def seeRank(message):
@@ -173,5 +214,11 @@ def getCm(message):
 
 print 'step1'
 
-inits.bot.polling()
+while(1):
+    try:
+        inits.bot.polling()
+    except:
+        time.sleep(5)
+        print "An error in polling()"
+
 print 'step2'

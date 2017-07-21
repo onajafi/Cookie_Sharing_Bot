@@ -54,7 +54,7 @@ def store_duel(FirstId,Amnt,CallBId,SecondId=0):
     con.close()
 
 def update_duel(CallBId,SecondId):
-    if(is_in_duel(SecondId)):
+    if(is_in_duel(SecondId)):# second person is in Duel
         return 5
     con = sqlite3.connect('duel.sqlite')
     cur = con.cursor()
@@ -74,6 +74,9 @@ def update_duel(CallBId,SecondId):
         elif is_in_duel(row[0]):# first person is in Duel
             con.close()
             return 4
+        elif (give_duel_amnt(CallBId) > give_user_like(row[0])):# first person doesn't have enouph likes
+            con.close()
+            return 6
         else:
             if(give_duel_amnt(CallBId) <= give_user_like(SecondId)):
                 cur.execute("UPDATE Duel SET Second_Id=? WHERE call_back_code=?", (SecondId, CallBId))
@@ -180,7 +183,6 @@ def finish_duel(Duel_ele):
 
     Duel_list.remove(Duel_ele)
 
-
 def is_in_duel(UsrId):
     for Duel_ele in Duel_list:
         if(Duel_ele.F_Id == UsrId or Duel_ele.S_Id == UsrId):
@@ -269,12 +271,15 @@ def callbacks(call):
                              "\nyou currently have " + str(give_user_like(user_Id)) + emoji.emojize(emoji.demojize(u'❤')))
             print "Sorry, your not able to duel, I think you don't have enough likes :)"
         elif result==4:# first user is in a duel
-            bot.send_message(user_Id, "Sorry, The user that you want to Duel with, is already in a Duel" +
+            bot.send_message(user_Id, "Sorry, The user that you want to duel with, is already in a Duel" +
                              "\nTry to tell him or her to finish the Duel or /abort it\nyou can also start a duel with /invite")
             print "user came a little late"
         elif result==5:# seconed user is in a duel
             bot.send_message(user_Id, "Sorry, you're already in a duel")
             print "already in duel"
+        elif result==6:
+            bot.send_message(user_Id, "Sorry, the user that you want to duel with, doesn't have enough likes")
+            print "First user is poor now"
         else:
             bot.send_message(user_Id, "Sorry can't start this Duel please try another or make a new one")
             print "error in duel starting..."
