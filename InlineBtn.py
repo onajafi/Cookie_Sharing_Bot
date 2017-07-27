@@ -206,7 +206,7 @@ def get_duel_move(UsrId,moveNum):
                     bot.send_message(Duel_ele.S_Id, "You have changed your move")
 
 
-            print "PART1"
+            #print "PART1"
             Duel_ele.solo_move(UsrId,moveNum)
             if(Duel_ele.Ready_to_move()):
                 resMSG=Duel_ele.compute_solo_moves()
@@ -244,7 +244,7 @@ def callbacks(call):
 
     rec_data=call.data
     user_Id=call.from_user.id
-    print call
+    #print call
 
     if rec_data[0]=='#':
         result=update_duel(rec_data,user_Id)
@@ -292,6 +292,8 @@ def show_markup(call):
         markup=Defaultmarkup
     bot.send_message(call.from_user.id,"Here is the menu",reply_markup=markup)
 
+half_inv=[]
+
 @bot.message_handler(commands=['invite'])
 def send_welcome(message):
     InvDuelCode=generate_duel_code(str(message.from_user.id),str(message.date))
@@ -311,6 +313,7 @@ def send_welcome(message):
         return
     except:
         bot.send_message(message.chat.id, "Please enter an amount in number")
+        half_inv.append(message.from_user.id)
         return
 
     markup = types.InlineKeyboardMarkup()
@@ -320,8 +323,37 @@ def send_welcome(message):
     init_inline_func(InvDuelCode)
     store_duel(message.from_user.id,Amnt,InvDuelCode)
 
+def get_Duel_Amnt_number(message):
+    try:
+        if message.from_user.id not in half_inv:
+            return False
+        half_inv.remove(message.from_user.id)
+        Amnt = int(message.text)
+
+        if (Amnt <= 0):
+            bot.send_message(message.chat.id, "Sorry, That isn't a valid amount :)")
+            return True
+        if (give_user_like(message.from_user.id) < Amnt):
+            bot.send_message(message.chat.id, "Sorry you don't have enough likes!")
+            return True
+
+        InvDuelCode = generate_duel_code(str(message.from_user.id), str(message.date))
+
+        markup = types.InlineKeyboardMarkup()
+        markup.add(types.InlineKeyboardButton("invite someone", switch_inline_query=InvDuelCode))
+        bot.send_message(message.chat.id, "Hi,\nI Like to invite you to a CookieDuel\non " + str(Amnt) + emoji.emojize(
+            emoji.demojize(u'❤')), reply_markup=markup)
+
+        init_inline_func(InvDuelCode)
+        store_duel(message.from_user.id, Amnt, InvDuelCode)
+        return True
+    except:
+
+        return False
+
+
 def get_Duel_MSG(message):
-    print message.text
+    # print message.text
     if(not is_in_duel(message.from_user.id)):
         return False
     if (message.text == emoji.emojize(emoji.demojize(u'🍪') + 'Banana Cookie' + emoji.demojize(u'🍌'))):

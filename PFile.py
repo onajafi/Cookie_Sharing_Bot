@@ -164,11 +164,11 @@ def getCm(message):
     if(last_time.has_key(userId) and (message.date-last_time[userId]) < 1):
         inits.bot.send_message(message.chat.id,
                                "Hey let me finish last cookie...")
-        print 'multiple calls from getCm'
+        # print 'multiple calls from getCm'
         return
 
     userMessage = message.text
-    print message
+    # print message
     userName = message.from_user.username
     userFirstName = message.from_user.first_name
     userLastName = message.from_user.last_name
@@ -203,12 +203,13 @@ def getCm(message):
         cn.close()
     elif (InlineBtn.get_Duel_MSG(message)):
         pass
+    elif (InlineBtn.get_Duel_Amnt_number(message)):
+        pass
     else:
         inits.bot.send_message(message.chat.id,
                         "Me not get any cookies :(")
-
-    print(message.from_user.username)
-    print "done"
+    # print(message.from_user.username)
+    # print "done"
 
 
 
