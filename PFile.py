@@ -54,7 +54,7 @@ HELPtext="""here is the list of commands:
 
 @inits.bot.message_handler(commands=['start'])
 def send_welcome(message):
-    inits.bot.sendMessage(chat_id=message.message.chat_id, text=Starttext)
+    inits.bot.send_message(chat_id=message.chat.id, text=Starttext)
 
 @inits.bot.message_handler(commands=['howtoplay'])
 def HowToPlay(message):
