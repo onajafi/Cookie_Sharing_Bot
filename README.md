@@ -9,7 +9,7 @@ This script is written in Python and it is powered
 by the [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI) library to sink with telegrams servers.
 
 The script was tested on Ubuntu and Ubuntu server 16.04 LTS operating systems.
-##Use for developers
+## Use for developers
 This script has a lot of examples for developers 
 (specially telegram bot designers) to use in there one code
 in this script you can find python examples about how to work with:
