@@ -11,8 +11,8 @@ by the [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI) library
 The script was tested on Ubuntu and Ubuntu server 16.04 LTS operating systems.
 ## Use for developers
 This script has a lot of examples for developers 
-(specially telegram bot designers) to use in there one code
-in this script you can find python examples about how to work with:
+(specially telegram bot designers) to use in there own code.
+In this script you can find python examples about how to work with:
 * [Inline commands](https://core.telegram.org/bots/inline)
 and results
 * SQlite databases
