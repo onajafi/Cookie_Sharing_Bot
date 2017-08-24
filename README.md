@@ -36,7 +36,7 @@ First you have to choose a directory to clone
 cd <DIRECTORY PATH>
 git clone https://github.com/onajafi/Cookie_Sharing_Bot.git
 ```
-We have the source,now run:
+We have the source, now run:
 ```
 python PFile.py
 ```
@@ -44,7 +44,7 @@ If you want to run it on the background, for example on a server or something yo
 ```
 python PFile.py &
 ```
-and to kill the background process you have run:
+and to kill the background process you have to run:
 ```
 pkill -f PFile.py
 ```

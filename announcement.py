@@ -14,12 +14,12 @@ import inits
 tb = telebot.TeleBot(inits.bot_address)
 
 announce_message="""Hey everybody,
-We have updated the bot by adding a challenging feature!
-You are now able to invite friends to a Cookie Duel, press /howtoduel for more informations.
-Type /help to see the new commands.
-and type /showcookies to see the reply buttons.
+Finally, the moment we have all been waiting for,
+We have published the bots background script on github.com and now it is open-source for everyone:
+Thank you for helping us develop this project!
 
-enjoy feeding
+https://github.com/onajafi/Cookie_Sharing_Bot
+
 .B"""
 
 def announce_to_all():
